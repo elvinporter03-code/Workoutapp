@@ -1,3 +1,3 @@
 
 
-string = "hej"
+string = "hej nummer 2"
