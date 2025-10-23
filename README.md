@@ -3,6 +3,9 @@
 2. Automatiskt räkna teoritiska PBn (FIXAD)
 3. Elosystem
 4. Loggar man fler sets senare i workouten ska de läggas till på de nuvarande. (T.ex för supersets)
+5. Ge möjligheten att lägga till övningar
+
+
 
 
 # Om tid finns
