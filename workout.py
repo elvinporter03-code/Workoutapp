@@ -1,6 +1,6 @@
 import csv
 import os
-from datetime import date, datetime, timedelta
+from datetime import date
 
 data = {}
 
@@ -26,7 +26,7 @@ def print_exercises():
         print(f'Exercise: {ex}')
         print(f'Muscle: {data[ex][0]}')
         print(f'Weight multiplier: {data[ex][1]}')
-        print(f'Sets: {data[ex][2]} Reps: {data[ex][3]}, Weight: {data[ex][4]}, 1RM: {data[ex][5]}')
+        print(f'Sets: {data[ex][2]} Reps: {data[ex][3]}, Weight: {data[ex][4]}, 1RM: {data[ex][5]}, Calc 1RM: {data[ex][6]}')
 
 
 def chose_exercise():
@@ -37,8 +37,9 @@ def chose_exercise():
             muscle_groups.append(data[ex][0])
     while choosen_muscle not in muscle_groups:
         count = 1
+        print()
         for m in muscle_groups:
-            print(f'| {count}. {m} | ', end='')
+            print(f'{count}. {m}')
             count += 1
         print()
         try:
@@ -46,7 +47,7 @@ def chose_exercise():
         except:
             index = -1
         if index == 0:
-            return []
+            return 0
         elif index > 0 and index <= len(muscle_groups):
             choosen_muscle = muscle_groups[index-1]
         else:
@@ -60,12 +61,14 @@ def chose_exercise():
 
     while choosen_exercise not in exercises:
         count = 1
+        print()
         for ex in exercises:
-            print(f'| {count}. {ex} | ', end='')
+            print(f'{count}. {ex}')
             count += 1
         print()
         try:
             index = int(input("Chose exercise: "))
+            print()
         except:
             index = -1
         if index > 0 and index <= len(exercises):
@@ -76,12 +79,16 @@ def chose_exercise():
 
 def add_exercise(workout):
     choosen_exercise = chose_exercise()
+    print(choosen_exercise)
+    if choosen_exercise == 0:
+        return workout
     sets = log_sets()
     for set in sets:
         if set[1] > data[choosen_exercise][5]:
             data[choosen_exercise][5] = set[1]
         calculated_rm = rm_formula(set[0], set[1])
         if calculated_rm > data[choosen_exercise][6]:
+            print(calculated_rm)
             data[choosen_exercise][6] = calculated_rm
     if choosen_exercise in workout:
         for set in sets:
@@ -133,12 +140,13 @@ def create_exercise(workout):
             muscle_groups.append(data[ex][0])
     while choosen_muscle not in muscle_groups:
         count = 1
+        print()
         for m in muscle_groups:
-            print(f'| {count}. {m} | ', end='')
+            print(f'{count}. {m}')
             count += 1
         print()
         try:
-            index = int(input("Chose muscle group: "))
+            index = int(input("Chose muscle group (To exit press 0): "))
         except:
             index = -1
         if index == 0:
@@ -164,20 +172,38 @@ def create_exercise(workout):
 def menu(workout):
     choice = ""
     while choice != "Q":
+        print()
         print("-" * 40)
         print("A: Logga en övning")
+        print("E: Editera en övning")
         print("L: Lista alla övningar")
-        print("R: Calculate 1RM")
+        print("R: Se ditt 1RM")
         print("Ö: Lägg till en ny övning i listan")#TODO
         print("-: Avsluta")
+        print("-" * 40)
 
         choice = input("Välj från menyn: ").upper()
         if choice == "A":
             add_exercise(workout)
         elif choice == "R":
             rm = calculate_rm()
-            if rm[2]:
-                print(f"You 1RM for {rm[0]} is {rm[1]}!")
+            if rm[3]:
+                width = 40
+                print("-" * width)
+
+                text = f"1 Rep Max för {rm[0]}:"
+                print(text.center(width))
+                print()
+                if rm[1] != 0:
+                    text = f"- Faktiska: {rm[1]}"
+                    print(text.center(width))
+                if rm[2] != 0:
+                    text = f"- Uppskattade: {rm[2]}"
+                    print(text.center(width))
+                print()
+                text = "Bra jobbat!"
+                print(text.center(width))
+
         elif choice == "L":
             print_exercises()
         elif choice == "Ö":
@@ -271,12 +297,16 @@ def save_workout(workout_name, workout):
 
 def calculate_rm():
     exercise = chose_exercise()
-    max_rep = data[exercise][6]
+    if chose_exercise == []:
+        return workout
+    max_rep = data[exercise][5]
+    calc_max_rep = data[exercise][6]
     haveData = True
-    if max_rep == 0:
+    if max_rep == 0 and calc_max_rep == 0:
+        print()
         print("No data on this exercise! Try logging a set first!")
         haveData = False
-    return (exercise, max_rep, haveData)
+    return (exercise, max_rep, calc_max_rep, haveData)
 
 def workout_exists(workout_name):
     folder = "workouts"
