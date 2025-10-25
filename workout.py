@@ -1,7 +1,6 @@
 import csv
 import os
 from datetime import date, datetime, timedelta
-import ast
 
 data = {}
 
@@ -23,11 +22,12 @@ with open("exercises.csv", newline='', encoding='utf-8') as csvfile:
 
 def print_exercises():
     for ex in data.keys():
+        print("-" * 35)
         print(f'Exercise: {ex}')
         print(f'Muscle: {data[ex][0]}')
         print(f'Weight multiplier: {data[ex][1]}')
         print(f'Sets: {data[ex][2]} Reps: {data[ex][3]}, Weight: {data[ex][4]}, 1RM: {data[ex][5]}')
-        print("-" * 35)
+
 
 def chose_exercise():
     choosen_muscle = ""
@@ -41,7 +41,10 @@ def chose_exercise():
             print(f'| {count}. {m} | ', end='')
             count += 1
         print()
-        index = int(input("Chose muscle group (To exit press 0): "))
+        try:
+            index = int(input("Chose muscle group (To exit press 0): "))
+        except:
+            index = -1
         if index == 0:
             return []
         elif index > 0 and index <= len(muscle_groups):
@@ -61,7 +64,10 @@ def chose_exercise():
             print(f'| {count}. {ex} | ', end='')
             count += 1
         print()
-        index = int(input("Chose exercise: "))
+        try:
+            index = int(input("Chose exercise: "))
+        except:
+            index = -1
         if index > 0 and index <= len(exercises):
             choosen_exercise = exercises[index-1]
         else:
@@ -77,7 +83,12 @@ def add_exercise(workout):
         calculated_rm = rm_formula(set[0], set[1])
         if calculated_rm > data[choosen_exercise][6]:
             data[choosen_exercise][6] = calculated_rm
-    workout[choosen_exercise] = sets
+    if choosen_exercise in workout:
+        for set in sets:
+            workout[choosen_exercise].append(set)
+        print(workout[choosen_exercise])
+    else:
+        workout[choosen_exercise] = sets
     return workout
 
 def log_sets():
@@ -86,15 +97,70 @@ def log_sets():
     reps = -1
     count_set = 1
     while reps != 0:
-        reps = int(input(f"For set {count_set}. How many reps did you do? (Press 0 if you are done): "))
+        if reps == -1:
+            try:
+                reps = int(input(f"For set {count_set}. How many reps did you do? (Press 0 if you are done): "))
+            except:
+                reps = -1
+                print("Reps should be an integer")
+
         if reps == 0:
             break
-        weight = int(input(f"For set {count_set}. With how many kg?: "))
-        set = (reps, weight)
-        sets.append(set)
-        count_set += 1
+        if reps != -1:
+            try:
+                weight = float(input(f"For set {count_set}. With how many kg?: "))
+                set = (reps, weight)
+                sets.append(set)
+                count_set += 1
+                reps = -1
+            except:
+                print("Weight should be a floating number")
+            
     return sets
     
+
+def create_exercise(workout):
+    new_ex = input("Name of the exercise you want to add: ")
+    new_ex_f = new_ex.title()
+
+    choosen_muscle = ""
+    muscle_groups = []
+    for ex in data.keys():
+        if ex == new_ex_f:
+            print("Exercise already exists")
+            return
+        if data[ex][0] not in muscle_groups:
+            muscle_groups.append(data[ex][0])
+    while choosen_muscle not in muscle_groups:
+        count = 1
+        for m in muscle_groups:
+            print(f'| {count}. {m} | ', end='')
+            count += 1
+        print()
+        try:
+            index = int(input("Chose muscle group: "))
+        except:
+            index = -1
+        if index == 0:
+            return []
+        elif index > 0 and index <= len(muscle_groups):
+            choosen_muscle = muscle_groups[index-1]
+        else:
+            print("Choose an existing muscle group")
+    w_multiplier = -1
+    while w_multiplier != 0:
+        try:
+            w_multiplier = float(input("What's the weight multiplier? (0 for default): "))
+        except:
+            print("Invalid multiplier")
+            w_multiplier = -1
+    if w_multiplier == 0:
+        w_multiplier = 1
+    data[new_ex_f] = [choosen_muscle, w_multiplier, 0, 0, 0, 0, 0]
+
+    # So that the file is saved even when no workout is logged
+    workout["Added"] = []
+
 def menu(workout):
     choice = ""
     while choice != "Q":
@@ -114,6 +180,8 @@ def menu(workout):
                 print(f"You 1RM for {rm[0]} is {rm[1]}!")
         elif choice == "L":
             print_exercises()
+        elif choice == "Ö":
+            create_exercise(workout)
         elif choice == "-":
             update_exercises(workout)
             break
