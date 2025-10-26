@@ -1,6 +1,6 @@
 import csv
 import os
-from datetime import date
+from datetime import date, datetime
 
 data = {}
 
@@ -88,12 +88,10 @@ def add_exercise(workout):
             data[choosen_exercise][5] = set[1]
         calculated_rm = rm_formula(set[0], set[1])
         if calculated_rm > data[choosen_exercise][6]:
-            print(calculated_rm)
             data[choosen_exercise][6] = calculated_rm
     if choosen_exercise in workout:
         for set in sets:
             workout[choosen_exercise].append(set)
-        print(workout[choosen_exercise])
     else:
         workout[choosen_exercise] = sets
     return workout
@@ -169,6 +167,69 @@ def create_exercise(workout):
     # So that the file is saved even when no workout is logged
     workout["Added"] = []
 
+def edit_exercise():
+    exercise = chose_exercise()
+    choice = ""
+    while choice != "Q":
+        print("-" * 40)
+        print(f"Vad vill du ändra på {exercise}?")
+        print("N: Namn")
+        print("M: Muskelgrupp")
+        print("W: Weight Multiplier")
+        print("Q: Klar")
+        print("-" * 40)
+        choice = input("Vad vill du redigera?: ").upper()
+        if choice == "N":
+            edit_helper(exercise, -1)
+        elif choice == "M":
+            edit_helper(exercise, 0)
+        elif choice == "W":
+            edit_helper(exercise, 1)
+        elif choice == "Q":
+            return
+        else:
+            print("Välj en bokstav från menyn!")
+
+def edit_helper(exercise, index):
+    new_input = ""
+    while new_input == "":
+        if index == 1:
+            try:
+                new_input = float(input("Ny multiplier: "))
+                data[exercise][index] = new_input 
+            except:
+                print("Multipliern måste vara ett flyttal")
+        elif index == 0:
+            print()
+            muscle_groups = []
+            for ex in data.keys():
+                if data[ex][0] not in muscle_groups:
+                    muscle_groups.append(data[ex][0])
+            while new_input not in muscle_groups:
+                count = 1
+                print()
+                for m in muscle_groups:
+                    print(f'{count}. {m}')
+                    count += 1
+                print()
+                try:
+                    index2 = int(input("Ny muskelgrupp (Tryck 0 för att lämna): "))
+                except:
+                    index2 = -1
+                if index2 == 0:
+                    return 0
+                elif index2 > 0 and index2 <= len(muscle_groups):
+                    new_input = muscle_groups[index2-1]
+                else:
+                    print("Choose an existing muscle group") 
+            data[exercise][0] = new_input
+        else:
+            new_input = input("Nytt namn: ")
+            new_input = new_input.title()
+            data[new_input] = data.pop(exercise)
+    workout["Added"] = ""
+
+
 def menu(workout):
     choice = ""
     while choice != "Q":
@@ -179,7 +240,7 @@ def menu(workout):
         print("L: Lista alla övningar")
         print("R: Se ditt 1RM")
         print("Ö: Lägg till en ny övning i listan")#TODO
-        print("-: Avsluta")
+        print("Q: Avsluta")
         print("-" * 40)
 
         choice = input("Välj från menyn: ").upper()
@@ -208,14 +269,20 @@ def menu(workout):
             print_exercises()
         elif choice == "Ö":
             create_exercise(workout)
-        elif choice == "-":
+        elif choice == "E":
+            edit_exercise()
+        elif choice == "Q":
             update_exercises(workout)
             break
         else: 
-            print("Chose a letter from the menu!")
+            print("Välj en bokstav från menyn!")
         
 
 def rm_formula(reps, weight):
+    #Return the actual weight if it's a real 1RM.
+    if reps == 1:
+        return weight
+    
     #Epley's formula
     return int(weight * (1 + reps/30))
 
@@ -256,8 +323,9 @@ def update_exercises(workout):
             })
 
 def save_workout(workout_name, workout):
-    if not workout:
-        print("No exercises were logged — nothing to save.")
+    keys = list(workout.keys())
+    if not workout or (len(keys) == 1 and keys[0] == "Added"):
+        print("Inga övningar loggade, inget att spara.")
         return
 
     filename = f"workouts/{workout_name}.csv"
@@ -293,7 +361,7 @@ def save_workout(workout_name, workout):
                 "Date": today
             })
 
-    print(f"Workout saved to '{filename}'!")
+    print(f"Workout sparad till '{filename}'!")
 
 def calculate_rm():
     exercise = chose_exercise()
@@ -304,7 +372,7 @@ def calculate_rm():
     haveData = True
     if max_rep == 0 and calc_max_rep == 0:
         print()
-        print("No data on this exercise! Try logging a set first!")
+        print(f"Ingen data finns för {exercise}! Logga ett set först!")
         haveData = False
     return (exercise, max_rep, calc_max_rep, haveData)
 
@@ -316,11 +384,12 @@ def workout_exists(workout_name):
     )
 
 def start_app(workout):
-    workout_name = input("Name of workout: ")
+    workout_name = input("Namn på passet (lämna tomt för dagens datum): ")
     while workout_exists(workout_name):
-        print("Workout name already exists!")
-        workout_name = input("Name of workout: ")
-
+        print("Workoutnamnet finns redan!")
+        workout_name = input("Namn på passet (lämna tomt för dagens datum): ")
+    if workout_name == "":
+        workout_name = datetime.now().strftime("%Y-%m-%d %H:%M")
     menu(workout)
     save_workout(workout_name, workout)
 

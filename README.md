@@ -6,7 +6,7 @@
 4. Loggar man fler sets senare i workouten ska de läggas till på de nuvarande. (T.ex för supersets) (FIXAD)
 5. Ge möjligheten att lägga till övningar (FIXAD)
 6. Göra så att programmet inte crashar när den får in fel format på indata. T.ex en bokstav när programmet fråga om vikt. (FIXAD)
-7. Möjligheten att ändra övningar. T.ex byta weight multiplier, byta namn, byta muskelgrupp.
+7. Möjligheten att ändra övningar. T.ex byta weight multiplier, byta namn, byta muskelgrupp. (FIXAD)
 8. Sätta mål.
 9. Dynamisk uppskattad tid för att nå målet.
 
