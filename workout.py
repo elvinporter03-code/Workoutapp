@@ -389,7 +389,7 @@ def start_app(workout):
         print("Workoutnamnet finns redan!")
         workout_name = input("Namn på passet (lämna tomt för dagens datum): ")
     if workout_name == "":
-        workout_name = datetime.now().strftime("%Y-%m-%d %H:%M")
+        workout_name = datetime.now().strftime("%Y-%m-%d_%H.%M")
     menu(workout)
     save_workout(workout_name, workout)
 
