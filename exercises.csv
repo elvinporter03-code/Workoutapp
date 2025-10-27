@@ -1,6 +1,6 @@
 Name,Primary muscle,Weight Multiplier,Sets,Reps,Weight,1rm,calculated1rm
-Incline Dumbbell Bench,Chest,2.0,0,0,0.0,0.0,0
-Cable Flies,Chest,1.0,1,10,400.0,40.0,53
+Incline Dumbbell Bench,Chest,2.0,3,20,1000.0,25.0,31
+Cable Flies,Chest,1.0,4,40,1900.0,50.0,70
 Chest Press Machine,Chest,1.0,1,2,181.0,90.5,96
 Shoulder Press Machine,Shoulders,1.0,0,0,0.0,0.0,0
 Lateral Raises,Shoulders,2.0,5,63,3780.0,10.0,15

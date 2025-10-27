@@ -392,6 +392,7 @@ def start_app(workout):
         workout_name = datetime.now().strftime("%Y-%m-%d_%H.%M")
     menu(workout)
     save_workout(workout_name, workout)
+    
 
 
 if __name__ == "__main__":
