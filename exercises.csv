@@ -1,9 +1,9 @@
 Name,Primary muscle,Weight Multiplier,Sets,Reps,Weight,1rm,calculated1rm
-Incline Dumbbell Bench,Chest,2.0,19,187,37592.0,160.0,208
-Cable Flies,Chest,1.0,0,0,0.0,0.0,0
-Chest Press Machine,Chest,1.0,0,0,0.0,0.0,0
+Incline Dumbbell Bench,Chest,2.0,0,0,0.0,0.0,0
+Cable Flies,Chest,1.0,1,10,400.0,40.0,53
+Chest Press Machine,Chest,1.0,1,2,181.0,90.5,96
 Shoulder Press Machine,Shoulders,1.0,0,0,0.0,0.0,0
-Lateral Raises,Shoulders,2.0,4,48,3480.0,0.0,0
+Lateral Raises,Shoulders,2.0,5,63,3780.0,10.0,15
 Lateral Raises (Cable),Shoulders,1.0,0,0,0.0,0.0,0
 Triceps Pushdowns,Triceps,1.0,0,0,0.0,0.0,0
 Triceps Extensions,Triceps,1.0,0,0,0.0,0.0,0
@@ -23,4 +23,4 @@ Squats,Legs,1.0,4,29,2616.0,0.0,0
 Leg Extensions,Legs,1.0,0,0,0.0,0.0,0
 Leg Curls,Legs,1.0,0,0,0.0,0.0,0
 Calf Press,Calves,1.0,0,0,0.0,0.0,0
-Skull Crushers,Triceps,1,0,0,0,0,0
+Skull Crushers,Triceps,1.0,0,0,0.0,0.0,0
