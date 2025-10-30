@@ -29,6 +29,7 @@ with open("exercises.csv", newline='', encoding='utf-8') as csvfile:
     for row in reader:
         name = row["Name"]
         primary_muscle = row["Primary muscle"]
+        secondary_muscle = row["Secondary muscle"]
         weight_multiplier = float(row["Weight Multiplier"])
         sets = int(row["Sets"])
         reps = int(row["Reps"])
@@ -36,7 +37,7 @@ with open("exercises.csv", newline='', encoding='utf-8') as csvfile:
         one_rm = float(row["1rm"])
         calc_rm = int(row["calculated1rm"])
 
-        data[name] = [primary_muscle, weight_multiplier, sets, reps, weight, one_rm, calc_rm]
+        data[name] = [primary_muscle,secondary_muscle, weight_multiplier, sets, reps, weight, one_rm, calc_rm]
 
 
 
@@ -45,11 +46,12 @@ def print_exercises():
         print("-" * 35)
         print(f'Exercise: {ex}')
         print(f'Muscle: {data[ex][0]}')
-        print(f'Weight multiplier: {data[ex][1]}')
-        print(f'Sets: {data[ex][2]} Reps: {data[ex][3]}, Weight: {data[ex][4]}, 1RM: {data[ex][5]}, Calc 1RM: {data[ex][6]}')
+        print(f'Secondary Muscle: {data[ex][1]}')
+        print(f'Weight multiplier: {data[ex][2]}')
+        print(f'Sets: {data[ex][3]} Reps: {data[ex][4]}, Weight: {data[ex][5]}, 1RM: {data[ex][6]}, Calc 1RM: {data[ex][7]}')
 
 
-def chose_exercise():
+def choose_exercise():
     choosen_muscle = ""
     muscle_groups = []
     for ex in data.keys():
@@ -98,17 +100,17 @@ def chose_exercise():
     return choosen_exercise
 
 def add_exercise(workout):
-    choosen_exercise = chose_exercise()
+    choosen_exercise = choose_exercise()
     print(choosen_exercise)
     if choosen_exercise == 0:
         return workout
     sets = log_sets(choosen_exercise)
     for set in sets:
-        if set[1] > data[choosen_exercise][5]:
-            data[choosen_exercise][5] = set[1]
+        if set[1] > data[choosen_exercise][6]:
+            data[choosen_exercise][6] = set[1]
         calculated_rm = rm_formula(set[0], set[1])
-        if calculated_rm > data[choosen_exercise][6]:
-            data[choosen_exercise][6] = calculated_rm
+        if calculated_rm > data[choosen_exercise][7]:
+            data[choosen_exercise][7] = calculated_rm
     if choosen_exercise in workout:
         for set in sets:
             workout[choosen_exercise].append(set)
@@ -159,8 +161,8 @@ def log_sets(exercise):
 def create_exercise(workout):
     new_ex = input("Name of the exercise you want to add: ")
     new_ex_f = new_ex.title()
-
-    choosen_muscle = ""
+    chosen_secondary = ""
+    chosen_muscle = ""
     muscle_groups = []
     for ex in data.keys():
         if ex == new_ex_f:
@@ -168,7 +170,7 @@ def create_exercise(workout):
             return
         if data[ex][0] not in muscle_groups:
             muscle_groups.append(data[ex][0])
-    while choosen_muscle not in muscle_groups:
+    while chosen_muscle not in muscle_groups:
         count = 1
         print()
         for m in muscle_groups:
@@ -182,31 +184,50 @@ def create_exercise(workout):
         if index == 0:
             return []
         elif index > 0 and index <= len(muscle_groups):
-            choosen_muscle = muscle_groups[index-1]
+            chosen_muscle = muscle_groups[index-1]
+        else:
+            print("Välj en existerande muskelgrupp")
+    while chosen_secondary not in muscle_groups:
+        count = 1
+        print()
+        for m in muscle_groups:
+            print(f'{count}. {m}')
+            count += 1
+        print()
+        try:
+            index = int(input("Välj en sekundär muskelgrupp (0 för att avsluta): "))
+        except:
+            index = -1
+        if index == 0:
+            return []
+        elif index > 0 and index <= len(muscle_groups):
+            chosen_secondary = muscle_groups[index-1]
         else:
             print("Välj en existerande muskelgrupp")
     w_multiplier = -1
-    while w_multiplier != 0:
+    while w_multiplier < 0: 
         try:
             w_multiplier = float(input("Vikt multiplikator? (0 för standard): "))
+            if w_multiplier == 0:
+                w_multiplier = 1
+                break
+            elif w_multiplier < 0:
+                print("Multiplier måste vara positivt!")
         except:
-            print("Invalid multiplier")
+            print("Invalid multiplier - ange ett nummer")
             w_multiplier = -1
-    if w_multiplier == 0:
-        w_multiplier = 1
-    data[new_ex_f] = [choosen_muscle, w_multiplier, 0, 0, 0, 0, 0]
-
-    # So that the file is saved even when no workout is logged
+    data[new_ex_f] = [chosen_muscle, chosen_secondary, w_multiplier, 0, 0, 0, 0, 0]
     workout["Added"] = []
 
 def edit_exercise():
-    exercise = chose_exercise()
+    exercise = choose_exercise()
     choice = ""
     while choice != "Q":
         print("-" * 40)
         print(f"Vad vill du ändra på {exercise}?")
         print("N: Namn")
         print("M: Muskelgrupp")
+        print("S: Sekundär muskelgrupp")
         print("W: Weight Multiplier")
         print("Q: Klar")
         print("-" * 40)
@@ -217,6 +238,8 @@ def edit_exercise():
             edit_helper(exercise, 0)
         elif choice == "W":
             edit_helper(exercise, 1)
+        elif choice =="S":
+            edit_helper(exercise, 2)
         elif choice == "Q":
             return
         else:
@@ -228,9 +251,33 @@ def edit_helper(exercise, index):
         if index == 1:
             try:
                 new_input = float(input("Ny multiplier: "))
-                data[exercise][index] = new_input 
+                data[exercise][index+1] = new_input 
             except:
                 print("Multipliern måste vara ett flyttal")
+        elif index == 2:
+            print()
+            muscle_groups = []
+            for ex in data.keys():
+                if data[ex][1] not in muscle_groups:
+                    muscle_groups.append(data[ex][1])
+            while new_input not in muscle_groups:
+                count = 1
+                print()
+                for m in muscle_groups:
+                    print(f'{count}. {m}')
+                    count += 1
+                print()
+                try:
+                    index2 = int(input("Ny sekundär muskelgrupp (Tryck 0 för att lämna): "))
+                except:
+                    index2 = -1
+                if index2 == 0:
+                    return 0
+                elif index2 > 0 and index2 <= len(muscle_groups):
+                    new_input = muscle_groups[index2-1]
+                else:
+                    print("Välj en existerande muskelgrupp") 
+            data[exercise][1] = new_input
         elif index == 0:
             print()
             muscle_groups = []
@@ -332,7 +379,7 @@ def update_exercises(workout):
         if ex_name not in data:
             continue
 
-        primary_muscle, weight_multiplier, prev_sets, prev_reps, prev_weight, one_rm, calc_rm = data[ex_name]
+        primary_muscle, secondary_muscle, weight_multiplier, prev_sets, prev_reps, prev_weight, one_rm, calc_rm = data[ex_name]
 
         sets_this = len(sets_list)
         reps_this = sum(r for (r, w) in sets_list)
@@ -342,9 +389,9 @@ def update_exercises(workout):
         new_reps = prev_reps + reps_this
         new_weight = prev_weight + weight_this
 
-        data[ex_name] = [primary_muscle, weight_multiplier, new_sets, new_reps, new_weight, one_rm, calc_rm]
+        data[ex_name] = [primary_muscle, secondary_muscle, weight_multiplier, new_sets, new_reps, new_weight, one_rm, calc_rm]
 
-    fieldnames = ["Name", "Primary muscle", "Weight Multiplier", "Sets", "Reps", "Weight", "1rm", "calculated1rm"]
+    fieldnames = ["Name", "Primary muscle", "Secondary muscle", "Weight Multiplier", "Sets", "Reps", "Weight", "1rm", "calculated1rm"]
     with open("exercises.csv", "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
@@ -352,12 +399,13 @@ def update_exercises(workout):
             writer.writerow({
                 "Name": name,
                 "Primary muscle": vals[0],
-                "Weight Multiplier": vals[1],
-                "Sets": vals[2],
-                "Reps": vals[3],
-                "Weight": vals[4],
-                "1rm": vals[5],
-                "calculated1rm": vals[6],
+                "Secondary muscle" : vals[1],
+                "Weight Multiplier": vals[2],
+                "Sets": vals[3],
+                "Reps": vals[4],
+                "Weight": vals[5],
+                "1rm": vals[6],
+                "calculated1rm": vals[7],
             })
 
 def save_workout(workout_name, workout):
@@ -367,7 +415,7 @@ def save_workout(workout_name, workout):
         return
 
     filename = f"workouts/{workout_name}.csv"
-    fieldnames = ["Name", "Primary muscle", "Weight Multiplier", "Sets", "Reps", "Weight", "1rm", "Date", "Score"]
+    fieldnames = ["Name", "Primary muscle", "Secondary muscle","Weight Multiplier", "Sets", "Reps", "Weight", "1rm", "Date", "Score"]
 
     today = date.today().isoformat()
 
@@ -379,7 +427,7 @@ def save_workout(workout_name, workout):
             if ex_name not in data:
                 continue
 
-            primary_muscle, weight_multiplier, _, _, _, _, calc_rm = data[ex_name]
+            primary_muscle, secondary_muscle, weight_multiplier, _, _, _, _, calc_rm = data[ex_name]
             one_rm = 0
             for set in sets_list:
                 if set[1] > one_rm:
@@ -391,6 +439,7 @@ def save_workout(workout_name, workout):
             writer.writerow({
                 "Name": ex_name,
                 "Primary muscle": primary_muscle,
+                "Secondary muscle": secondary_muscle,
                 "Weight Multiplier": weight_multiplier,
                 "Sets": str(sets_list),
                 "Reps": total_reps,
@@ -403,11 +452,11 @@ def save_workout(workout_name, workout):
     print(f"Workout sparad till '{filename}'!")
 
 def calculate_rm():
-    exercise = chose_exercise()
-    if chose_exercise == []:
+    exercise = choose_exercise()
+    if choose_exercise == []:
         return workout
-    max_rep = data[exercise][5]
-    calc_max_rep = data[exercise][6]
+    max_rep = data[exercise][6]
+    calc_max_rep = data[exercise][7]
     haveData = True
     if max_rep == 0 and calc_max_rep == 0:
         print()
@@ -451,7 +500,7 @@ def calculate_expected_1rm(exercise, setcount):
     if len(lastworkouts) > 0:
         erm = erm_calc(lastworkouts)
         erm *= (0.95**(setcount-1))
-        print(f"1RM att slå: {data[exercise][5]}kg")
+        print(f"1RM att slå: {data[exercise][6]}kg")
 
         if goal==0:
             strength=erm*0.85
@@ -562,14 +611,20 @@ def get_last_week():
                     sets_list = ast.literal_eval(row['Sets'])
                     num_sets = len(sets_list)
                     muscle = row["Primary muscle"]
+                    smuscle = row["Secondary muscle"]
                     if muscle in muscle_sets:
                         muscle_sets[muscle] += num_sets
                     else:
                         muscle_sets[muscle] = num_sets
+                    if smuscle in muscle_sets:
+                        muscle_sets[smuscle] += (0.5*num_sets)
+                    else:
+                        muscle_sets[smuscle] = (0.5*num_sets)
                     weeklyscore+=int(row["Score"])
-    for i in muscle_sets:
-        print(i)
-    print(weeklyscore)
+    print("Weekly Summary - Sets per muskelgrupp:")
+    for muscle, total_sets in muscle_sets.items():
+        print(f"{muscle}: {total_sets} sets")
+    print(f"Veckans poäng: {weeklyscore}")
     
 if __name__ == "__main__":
     workout = {}
