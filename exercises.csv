@@ -1,27 +1,31 @@
-Name,Primary muscle,Weight Multiplier,Sets,Reps,Weight,1rm,calculated1rm
-Incline Dumbbell Bench,Chest,2.0,34,397,54607.0,160.0,208
-Chest Press Machine,Chest,1.0,0,0,0.0,0.0,0
-Shoulder Press Machine,Shoulders,1.0,1,10,200.0,20.0,26
-Lateral Raises,Shoulders,2.0,10,99,11160.0,165.0,220
-Lateral Raises (Cable),Shoulders,1.0,3,30,270.0,9.0,12
-Triceps Pushdowns,Triceps,1.0,0,0,0.0,0.0,0
-Triceps Extensions,Triceps,1.0,0,0,0.0,0.0,0
-Pullups,Back,1.0,0,0,0.0,0.0,0
-Lat Pulldown,Back,1.0,1,10,500.0,0.0,0
-Single Arm Latpulldown,Back,2.0,0,0,0.0,0.0,0
-Low Row Machine,Back,1.0,0,0,0.0,0.0,0
-Cable Rows,Back,1.0,0,0,0.0,0.0,0
-Reverse Cable Flies,Back,1.0,0,0,0.0,0.0,0
-Seated Dumbbell Bicep Curls,Biceps,2.0,0,0,0.0,0.0,0
-Cable Bicep Curls,Biceps,1.0,0,0,0.0,0.0,0
-Reverse Cable Curls,Biceps,1.0,0,0,0.0,0.0,0
-Wrist Cable Curls,Forearms,1.0,0,0,0.0,0.0,0
-Machine Cable Crunches,Abs,1.0,0,0,0.0,0.0,0
-Leg Press Machine,Legs,1.0,0,0,0.0,0.0,0
-Squats,Legs,1.0,4,29,2616.0,0.0,0
-Leg Extensions,Legs,1.0,0,0,0.0,0.0,0
-Leg Curls,Legs,1.0,0,0,0.0,0.0,0
-Skull Crushers,Triceps,1.0,2,11,1655.0,155.0,200
-Pull Ups,Back,1.0,0,0,0.0,0.0,0
-Cable Flies,Chest,1.0,0,0,0.0,0.0,0
-Calf Raises,Calves,2.3,0,0,0.0,0.0,0
+Name,Primary muscle,Secondary muscle,Weight Multiplier,Sets,Reps,Weight,1rm,calculated1rm
+Incline Dumbbell Bench,Chest,Triceps,2.0,6,34,1610.0,27.5,32
+Cable Flies,Chest,Chest,1.0,5,30,580.0,20.0,24
+Chest Press Machine,Chest,Triceps,1.0,0,0,0.0,0.0,0
+Shoulder Press Machine,Shoulders,Triceps,1.0,0,0,0.0,0.0,0
+Lateral Raises,Shoulders,Shoulders,2.0,0,0,0.0,0.0,0
+Lateral Raises (Cable),Shoulders,Shoulders,1.0,7,57,332.5,7.5,9
+Triceps Pushdowns,Triceps,Triceps,1.0,7,38,1192.5,35.0,40
+Triceps Extensions,Triceps,Triceps,1.0,0,0,0.0,0.0,0
+Pullups,Back,Biceps,1.0,2,9,657.0,73.0,85
+Lat Pulldown,Back,Biceps,1.0,2,10,700.0,70.0,81
+Single Arm Latpulldown,Back,Back,2.0,0,0,0.0,0.0,0
+Low Row Machine,Back,Biceps,1.0,2,5,445.0,105.0,105
+Cable Rows,Back,Biceps,1.0,4,20,1550.0,85.0,102
+Reverse Cable Flies,Shoulders,Shoulders,1.0,2,22,110.0,5.0,7
+Seated Dumbbell Bicep Curls,Biceps,Biceps,2.0,1,6,180.0,15.0,18
+Cable Bicep Curls,Biceps,Biceps,1.0,5,34,870.0,30.0,38
+Reverse Cable Curls,Forearms,Biceps,1.0,0,0,0.0,0.0,0
+Wrist Cable Curls,Forearms,Forearms,1.0,1,20,450.0,22.5,37
+Machine Cable Crunches,Abs,Abs,1.0,2,12,480.0,45.0,54
+Leg Press Machine,Legs,Legs,1.0,3,26,3900.0,150.0,200
+Squats,Legs,Legs,1.0,0,0,0.0,0.0,0
+Leg Extensions,Legs,Legs,1.0,2,19,1460.0,80.0,105
+Leg Curls,Legs,Legs,1.0,0,0,0.0,0.0,0
+Calf Press,Legs,Legs,1.0,2,28,4200.0,150.0,225
+Skull Crushers,Triceps,Triceps,1.0,0,0,0.0,0.0,0
+Barbell Bench,Chest,Triceps,1.0,0,0,0.0,0.0,0
+Dumbbell Shoulder Press,Shoulders,Triceps,2.0,2,15,525.0,17.5,22
+Single Arm Cable Curl,Biceps,Biceps,2.0,2,13,195.0,15.0,18
+Chest Supported Incline Row Dumbbell,Back,Biceps,2.0,2,16,270.0,20.0,24
+Deadlifts,Back,Legs,1.0,0,0,0,0,0
