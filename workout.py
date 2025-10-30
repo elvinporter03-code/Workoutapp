@@ -1,10 +1,28 @@
 import csv
 import os
-from datetime import date, datetime
+import ast
+from datetime import date, datetime, timedelta
 
+goal = 0
+score = 0
+sessionscore = 0
 data = {}
 
 #Automatiskt räkna ut PB för varje set
+
+def read_score():
+    global score, goal
+    with open('settings.csv', newline='', encoding='utf-8',) as f:
+        reader=csv.DictReader(f)
+        for row in reader:
+            score=row['score']
+            goal=row['goal']
+        score=int(score)
+        goal=int(goal)
+    return goal
+
+goal = read_score()
+
 
 with open("exercises.csv", newline='', encoding='utf-8') as csvfile:
     reader = csv.DictReader(csvfile)
@@ -19,6 +37,8 @@ with open("exercises.csv", newline='', encoding='utf-8') as csvfile:
         calc_rm = int(row["calculated1rm"])
 
         data[name] = [primary_muscle, weight_multiplier, sets, reps, weight, one_rm, calc_rm]
+
+
 
 def print_exercises():
     for ex in data.keys():
@@ -43,7 +63,7 @@ def chose_exercise():
             count += 1
         print()
         try:
-            index = int(input("Chose muscle group (To exit press 0): "))
+            index = int(input("Välj muskelgruppp (0 för att avsluta): "))
         except:
             index = -1
         if index == 0:
@@ -51,7 +71,7 @@ def chose_exercise():
         elif index > 0 and index <= len(muscle_groups):
             choosen_muscle = muscle_groups[index-1]
         else:
-            print("Choose an existing muscle group")
+            print("Välj en existerande muskelgrupp")
     
     choosen_exercise = ""
     exercises = []
@@ -67,14 +87,14 @@ def chose_exercise():
             count += 1
         print()
         try:
-            index = int(input("Chose exercise: "))
+            index = int(input("Välj övning : "))
             print()
         except:
             index = -1
         if index > 0 and index <= len(exercises):
             choosen_exercise = exercises[index-1]
         else:
-            print("Choose an existing exercise")
+            print("Välj en existerande övning eller lägg till en egen: ")
     return choosen_exercise
 
 def add_exercise(workout):
@@ -82,7 +102,7 @@ def add_exercise(workout):
     print(choosen_exercise)
     if choosen_exercise == 0:
         return workout
-    sets = log_sets()
+    sets = log_sets(choosen_exercise)
     for set in sets:
         if set[1] > data[choosen_exercise][5]:
             data[choosen_exercise][5] = set[1]
@@ -96,31 +116,43 @@ def add_exercise(workout):
         workout[choosen_exercise] = sets
     return workout
 
-def log_sets():
+def log_sets(exercise):
     sets = []
     weight = -1
     reps = -1
     count_set = 1
+    temp=False
     while reps != 0:
         if reps == -1:
+            if not temp:
+                expected=calculate_expected_1rm(exercise, count_set)
             try:
-                reps = int(input(f"For set {count_set}. How many reps did you do? (Press 0 if you are done): "))
+                
+                reps = int(input(f"I set {count_set}. Hur många reps gjorde du? (tryck 0 om du är klar): "))
             except:
                 reps = -1
-                print("Reps should be an integer")
+                print("Ange reps som integers")
 
         if reps == 0:
             break
-        if reps != -1:
+        if reps != -1:  
             try:
-                weight = float(input(f"For set {count_set}. With how many kg?: "))
+                weight = float(input(f"I set {count_set}. Hur mycket vikt lyfte du?: "))
+                print()
                 set = (reps, weight)
                 sets.append(set)
                 count_set += 1
-                reps = -1
+                check_score(expected, rm_formula(reps,weight))
+                if expected == 0:
+                    expected=rm_formula(reps,weight)
+                    temp=True
+                reps = -1  
+                
             except:
-                print("Weight should be a floating number")
-            
+                print("Ange vikt som en siffra! ")
+                
+        
+
     return sets
     
 
@@ -144,7 +176,7 @@ def create_exercise(workout):
             count += 1
         print()
         try:
-            index = int(input("Chose muscle group (To exit press 0): "))
+            index = int(input("Välj en muskelgrupp (0 för att avsluta): "))
         except:
             index = -1
         if index == 0:
@@ -152,11 +184,11 @@ def create_exercise(workout):
         elif index > 0 and index <= len(muscle_groups):
             choosen_muscle = muscle_groups[index-1]
         else:
-            print("Choose an existing muscle group")
+            print("Välj en existerande muskelgrupp")
     w_multiplier = -1
     while w_multiplier != 0:
         try:
-            w_multiplier = float(input("What's the weight multiplier? (0 for default): "))
+            w_multiplier = float(input("Vikt multiplikator? (0 för standard): "))
         except:
             print("Invalid multiplier")
             w_multiplier = -1
@@ -221,7 +253,7 @@ def edit_helper(exercise, index):
                 elif index2 > 0 and index2 <= len(muscle_groups):
                     new_input = muscle_groups[index2-1]
                 else:
-                    print("Choose an existing muscle group") 
+                    print("Välj en existerande muskelgrupp") 
             data[exercise][0] = new_input
         else:
             new_input = input("Nytt namn: ")
@@ -237,9 +269,11 @@ def menu(workout):
         print("-" * 40)
         print("A: Logga en övning")
         print("E: Editera en övning")
+        print("I: Inställningar")
         print("L: Lista alla övningar")
         print("R: Se ditt 1RM")
         print("Ö: Lägg till en ny övning i listan")#TODO
+        print("S: Se din weekly summary")
         print("Q: Avsluta")
         print("-" * 40)
 
@@ -267,10 +301,14 @@ def menu(workout):
 
         elif choice == "L":
             print_exercises()
-        elif choice == "Ö":
+        elif choice == "Ö": 
             create_exercise(workout)
         elif choice == "E":
             edit_exercise()
+        elif choice == "I":
+            change_goal()
+        elif choice == "S":
+            get_last_week()
         elif choice == "Q":
             update_exercises(workout)
             break
@@ -282,7 +320,7 @@ def rm_formula(reps, weight):
     #Return the actual weight if it's a real 1RM.
     if reps == 1:
         return weight
-    
+
     #Epley's formula
     return int(weight * (1 + reps/30))
 
@@ -329,7 +367,7 @@ def save_workout(workout_name, workout):
         return
 
     filename = f"workouts/{workout_name}.csv"
-    fieldnames = ["Name", "Primary muscle", "Weight Multiplier", "Sets", "Reps", "Weight", "1rm", "Date"]
+    fieldnames = ["Name", "Primary muscle", "Weight Multiplier", "Sets", "Reps", "Weight", "1rm", "Date", "Score"]
 
     today = date.today().isoformat()
 
@@ -358,7 +396,8 @@ def save_workout(workout_name, workout):
                 "Reps": total_reps,
                 "Weight": total_weight,
                 "1rm": one_rm,
-                "Date": today
+                "Date": today,
+                "Score": sessionscore
             })
 
     print(f"Workout sparad till '{filename}'!")
@@ -393,8 +432,145 @@ def start_app(workout):
     menu(workout)
     save_workout(workout_name, workout)
     
+def calculate_expected_1rm(exercise, setcount):
+    lastworkouts=[]
+    workouts_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "workouts")
+    for filename in os.listdir(workouts_folder):
+        path = os.path.join(workouts_folder, filename)
+        with open(path, 'r', newline='', encoding='utf-8') as csvfile:
+            past_workout=csv.DictReader(csvfile)
+            for row in past_workout:
+                if row['Name'] == exercise:
+                    sets=row['Sets']
+                    try: 
+                        sets=ast.literal_eval(sets)
+                        if sets and len(sets) > 0:
+                            lastworkouts.append(rm_formula(sets[0][0],sets[0][1]))
+                    except (ValueError, SyntaxError) as e:
+                        print(e)
+    if len(lastworkouts) > 0:
+        erm = erm_calc(lastworkouts)
+        erm *= (0.95**(setcount-1))
+        print(f"1RM att slå: {data[exercise][5]}kg")
+
+        if goal==0:
+            strength=erm*0.85
+            
+            print(f"För träning med fokus på styrka, gör: {round_reps(reverse_epley(erm, round_kgs(strength)))} reps med {round_kgs(strength)}kg")
+            print()
+            erm=rm_formula(round_reps(reverse_epley(erm,round_kgs(strength))), round_kgs(strength))
+        else:
+            hypertrophy =erm*0.7
+            print(f"För träning med fokus på hypertrofi, gör: {round_reps(reverse_epley(erm, round_kgs(hypertrophy)))} reps med {round_kgs(hypertrophy)}kg")
+            print()
+            erm=rm_formula(round_reps(reverse_epley(erm,round_kgs(hypertrophy))), round_kgs(hypertrophy))
+
+        return erm
+    return 0
+                 
+def erm_calc(sets):   #Tar snittökningen minus minsta värdet + största för att få ett expected 1rm   
+    erm=sum(sets)
+    erm=erm/len(sets) 
+    erm-=min(sets)
+    erm+=max(sets)
+    return erm
+    
+def reverse_epley(erm, weight): #inverterar epleys formel
+    suggested_reps=erm/weight
+    suggested_reps-=1
+    suggested_reps*=30
+    return suggested_reps
 
 
+def write_score(change):
+    global score, goal, sessionscore
+    read_score()
+    fields=['score', 'goal']
+    with open('settings.csv', 'w', newline='', encoding='utf-8') as f:
+        writer=csv.DictWriter(f, fieldnames=fields)
+        writer.writeheader()
+        score+=change
+        sessionscore+=change
+        writer.writerow({
+                "score" : score,
+                "goal" : goal
+            })     
+    print(f"Du har nu: {score} poäng!")   
+
+
+def check_score(expected, actual):
+    if actual>expected:
+        print("Snyggt jobbat! Du slog förväntningarna!")
+        write_score(1)
+    elif actual==expected:
+        print("Helt okej")
+        return
+    elif actual<expected:
+        print("Bättre kan du!")
+        write_score(-1)
+
+def round_kgs(kg):
+    r=kg%5
+    if r>=2.5:
+        kg = kg//5
+        kg*=5
+        kg+=5
+    else:
+        kg-=r
+    return kg
+
+def round_reps(reps):
+    return int(reps+1)
+
+def change_goal():
+    global goal
+    if goal == 0:
+        mode = "styrka"
+    else:
+        mode = "hypertrofi"
+
+    print(f"Ditt nuvarande träningssätt är {mode}")
+    print("Sätt nytt mål (0 för att avbryta)")
+    local_goal = -1
+    while local_goal != 0:
+        try:
+            local_goal = int(input("Skriv 1 för styrka, eller 2 för hypertrofi: ")) - 1
+            if local_goal == 1 or local_goal == 0:
+                goal = local_goal
+                break
+        except:
+            print("Skriv in en siffra!")
+        print("Välj antingen 1 eller 2!")
+        
+    
+def is_within_past_week(given_date):
+    given_date = datetime.strptime(given_date, '%Y-%m-%d').date() 
+    today = date.today()
+    one_week_ago = today - timedelta(days=7)
+    return one_week_ago <= given_date <= today
+
+def get_last_week():
+    weeklyscore=0
+    muscle_sets = {}
+    workouts_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "workouts")
+    for filename in os.listdir(workouts_folder):
+        path = os.path.join(workouts_folder, filename)
+        with open(path, 'r', newline='', encoding='utf-8') as csvfile:
+            past_workout=csv.DictReader(csvfile)
+            for row in past_workout:
+                if is_within_past_week(row['Date']):
+                    sets_list = ast.literal_eval(row['Sets'])
+                    num_sets = len(sets_list)
+                    muscle = row["Primary muscle"]
+                    if muscle in muscle_sets:
+                        muscle_sets[muscle] += num_sets
+                    else:
+                        muscle_sets[muscle] = num_sets
+                    weeklyscore+=int(row["Score"])
+    for i in muscle_sets:
+        print(i)
+    print(weeklyscore)
+    
 if __name__ == "__main__":
     workout = {}
     start_app(workout)

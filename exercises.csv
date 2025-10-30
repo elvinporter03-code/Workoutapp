@@ -1,26 +1,27 @@
 Name,Primary muscle,Weight Multiplier,Sets,Reps,Weight,1rm,calculated1rm
-Incline Dumbbell Bench,Chest,2.0,3,20,1000.0,25.0,31
-Cable Flies,Chest,1.0,4,40,1900.0,50.0,70
-Chest Press Machine,Chest,1.0,1,2,181.0,90.5,96
-Shoulder Press Machine,Shoulders,1.0,0,0,0.0,0.0,0
-Lateral Raises,Shoulders,2.0,5,63,3780.0,10.0,15
-Lateral Raises (Cable),Shoulders,1.0,0,0,0.0,0.0,0
-Triceps Pushdowns,Triceps,1.0,0,0,0.0,0.0,0
-Triceps Extensions,Triceps,1.0,0,0,0.0,0.0,0
-Pullups,Back,1.0,0,0,0.0,0.0,0
-Lat Pulldown,Back,1.0,1,10,500.0,0.0,0
-Single Arm Latpulldown,Back,2.0,0,0,0.0,0.0,0
-Low Row Machine,Back,1.0,0,0,0.0,0.0,0
-Cable Rows,Back,1.0,0,0,0.0,0.0,0
-Reverse Cable Flies,Back,1.0,0,0,0.0,0.0,0
-Seated Dumbbell Bicep Curls,Biceps,2.0,0,0,0.0,0.0,0
-Cable Bicep Curls,Biceps,1.0,0,0,0.0,0.0,0
-Reverse Cable Curls,Biceps,1.0,0,0,0.0,0.0,0
-Wrist Cable Curls,Forearms,1.0,0,0,0.0,0.0,0
-Machine Cable Crunches,Abs,1.0,0,0,0.0,0.0,0
-Leg Press Machine,Legs,1.0,0,0,0.0,0.0,0
-Squats,Legs,1.0,4,29,2616.0,0.0,0
-Leg Extensions,Legs,1.0,0,0,0.0,0.0,0
-Leg Curls,Legs,1.0,0,0,0.0,0.0,0
-Calf Press,Calves,1.0,0,0,0.0,0.0,0
-Skull Crushers,Triceps,1.0,0,0,0.0,0.0,0
+Incline Dumbbell Bench,Chest,2.0,1,9,162.0,9.0,11
+Cable Flies,Chest,1.0,1,9,81.0,9.0,11
+Chest Press Machine,Chest,1.0,3,21,249.0,14.0,18
+Shoulder Press Machine,Shoulders,1.0,1,9,81.0,9.0,11
+Lateral Raises,Shoulders,2.0,1,9,162.0,9.0,11
+Lateral Raises (Cable),Shoulders,1.0,1,9,81.0,9.0,11
+Triceps Pushdowns,Triceps,1.0,1,9,81.0,9.0,11
+Triceps Extensions,Triceps,1.0,1,9,81.0,9.0,11
+Pullups,Back,1.0,2,10,91.0,10.0,11
+Lat Pulldown,Back,1.0,2,19,831.0,75.0,100
+Single Arm Latpulldown,Back,2.0,2,19,362.0,10.0,13
+Low Row Machine,Back,1.0,1,9,81.0,9.0,11
+Cable Rows,Back,1.0,1,9,81.0,9.0,11
+Reverse Cable Flies,Back,1.0,1,9,81.0,9.0,11
+Seated Dumbbell Bicep Curls,Biceps,2.0,1,9,162.0,9.0,11
+Cable Bicep Curls,Biceps,1.0,1,9,81.0,9.0,11
+Reverse Cable Curls,Biceps,1.0,1,9,81.0,9.0,11
+Wrist Cable Curls,Forearms,1.0,1,9,81.0,9.0,11
+Machine Cable Crunches,Abs,1.0,1,9,81.0,9.0,11
+Leg Press Machine,Legs,1.0,1,9,81.0,9.0,11
+Squats,Legs,1.0,1,9,81.0,9.0,11
+Leg Extensions,Legs,1.0,1,9,81.0,9.0,11
+Leg Curls,Legs,1.0,1,9,81.0,9.0,11
+Calf Press,Calves,1.0,1,9,81.0,9.0,11
+Skull Crushers,Triceps,1.0,1,9,81.0,9.0,11
+Barbell Bench,Chest,1.0,3,26,267.0,12.0,15

@@ -9,6 +9,7 @@
 7. Möjligheten att ändra övningar. T.ex byta weight multiplier, byta namn, byta muskelgrupp. (FIXAD)
 8. Sätta mål.
 9. Dynamisk uppskattad tid för att nå målet.
+10. Fixa Epleys omvända formel, den ger inkonsistenta resultat
 
 # Om tid finns
 
