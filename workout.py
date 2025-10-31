@@ -154,12 +154,8 @@ def log_sets(exercise):
                     temp=True
                 dropset=False
                 reps = -1 
-                
             except:
                 print("Ange vikt som en siffra! ")
-                
-        
-
     return sets
     
 
@@ -553,7 +549,7 @@ def write_score(change):
 
 
 def check_score(expected, actual, dropset):
-    if dropset:
+    if dropset and goal == 1:
         write_score(1)
     else:
         if actual>expected:
