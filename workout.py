@@ -124,17 +124,21 @@ def log_sets(exercise):
     reps = -1
     count_set = 1
     temp=False
+    dropset=False
     while reps != 0:
         if reps == -1:
-            if not temp:
+            if not temp and not dropset:
                 expected=calculate_expected_1rm(exercise, count_set)
-            try:
-                
-                reps = int(input(f"I set {count_set}. Hur många reps gjorde du? (tryck 0 om du är klar): "))
-            except:
-                reps = -1
-                print("Ange reps som integers")
-
+                reps = input(f"I set {count_set}. Hur många reps gjorde du? (tryck 0 om du är klar eller D för dropset): ")
+            if str(reps).upper() == 'D':
+                    dropset=True
+                    reps=int(input("Hur många reps i dropsettet?: "))
+            else:
+                try:
+                    reps=int(reps)
+                except:
+                    reps = -1
+                    print("Ange reps som integers")
         if reps == 0:
             break
         if reps != -1:  
@@ -144,11 +148,12 @@ def log_sets(exercise):
                 set = (reps, weight)
                 sets.append(set)
                 count_set += 1
-                check_score(expected, rm_formula(reps,weight))
+                check_score(expected, rm_formula(reps,weight),dropset)
                 if expected == 0:
                     expected=rm_formula(reps,weight)
                     temp=True
-                reps = -1  
+                dropset=False
+                reps = -1 
                 
             except:
                 print("Ange vikt som en siffra! ")
@@ -547,16 +552,19 @@ def write_score(change):
     print(f"Du har nu: {score} poäng!")   
 
 
-def check_score(expected, actual):
-    if actual>expected:
-        print("Snyggt jobbat! Du slog förväntningarna!")
+def check_score(expected, actual, dropset):
+    if dropset:
         write_score(1)
-    elif actual==expected:
-        print("Helt okej")
-        return
-    elif actual<expected:
-        print("Bättre kan du!")
-        write_score(-1)
+    else:
+        if actual>expected:
+            print("Snyggt jobbat!")
+            write_score(2)
+        elif actual==expected:
+            print("Helt okej")
+            return
+        elif actual<expected:
+            print("Bättre kan du!")
+            write_score(-2)
 
 def round_kgs(kg):
     r=kg%5
